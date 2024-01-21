@@ -1,0 +1,53 @@
+version: '3'
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - ./data/postgres/postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis/redis-data:/data
+    env_file:
+      - .env
+
+  backend:
+    container_name: backend
+    restart: unless-stopped
+    build:
+      dockerfile: Dockerfile.dev
+      context: .
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - '4566:4566'
+    environment:
+      - DEBUG=${DEBUG-}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - './s3/volume:/var/lib/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'

@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      html {
+        padding: 0;
+        margin: 0;
+        background: black;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #191919;
+        padding: 0;
+        margin: 0;
+      }
+
+      .container {
+        max-width: 700px;
+        min-width: 700px;
+        width: 700px;
+        margin: 0 auto;
+        background-color: #18181b;
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid #2e2e2e;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        color: #ffffff;
+        transform: translate(-50%, -50%);
+      }
+
+      .content {
+        line-height: 1.5;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #096bc4;
+        color: #cbd5e1;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <%- include('header/defaultHeader.ejs') %>
+      <div class="content">
+        <p>Dear <%= firstName %>,</p>
+        <p>You can use the following 6-digit code to verify your account:</p>
+        <h1 style="font-size: 2em; color: #4285f4; margin: 20px 0">
+          <%= verifyEmailToken %>
+        </h1>
+        <p>
+          Do not share this code with anyone. It is important for your security.
+        </p>
+        <p>Thank you.</p>
+      </div>
+      <%- include('footer/defaultFooter.ejs') %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+.tippy-box[data-theme='link-tooltip'] {
+	@apply bg-mediumBlack text-white  shadow-lg px-3 py-2 rounded-lg min-w-fit max-w-fit border-[1px] border-primary;
+
+	& > .tippy-svg-arrow {
+		@apply fill-primary;
+	}
+}
+
+.tippy-box[data-theme='text-formating-bubble-menu'] {
+	@apply rounded-lg;
+
+	& > .tippy-svg-arrow {
+		@apply fill-primary;
+	}
+}
+
+.tippy-box[data-theme~='editorial-tools-tooltip'] {
+	@apply rounded-lg;
+
+	& > .tippy-svg-arrow {
+		@apply fill-primary;
+	}
+}

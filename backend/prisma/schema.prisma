@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Roles {
+  id        String   @id @default(uuid())
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Users     Users[]
+}
+
+model Users {
+  id                   String      @id @default(uuid())
+  userCode             String      @unique
+  roleID               String
+  userName             String      @unique
+  firstName            String      @db.VarChar(30)
+  lastName             String      @db.VarChar(30)
+  email                String      @unique
+  password             String
+  bio                  String?
+  instagramLink        String?
+  twitterLink          String?
+  facebookLink         String?
+  youtubeLink          String?
+  githubLink           String?
+  websiteLink          String?
+  profileImage         String?
+  followersCount       Int?        @default(0)
+  followingCount       Int?        @default(0)
+  blogCount            Int?        @default(0)
+  isAccountActive      Boolean     @default(true)
+  isAccountConfirmed   Boolean     @default(false)
+  isAccountBlocked     Boolean     @default(false)
+  isAccountDeleted     Boolean     @default(false)
+  accountDeactivatedAt DateTime?
+  accountConfirmedAt   DateTime?
+  accountBlockedAt     DateTime?
+  accountDeletedAt     DateTime?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  Blogs                Blogs[]
+  Roles                Roles?      @relation(fields: [roleID], references: [id])
+  Followers            Followers[]
+  Following            Following[]
+
+  @@index([userCode, roleID])
+}
+
+model Followers {
+  id         String   @id @default(uuid())
+  userID     String
+  followerID String
+  followedAt DateTime @default(now())
+  Followers  Users    @relation(fields: [followerID], references: [id])
+
+  @@index([userID, followerID])
+}
+
+model Following {
+  id          String   @id @default(uuid())
+  userID      String
+  followingID String
+  followingAt DateTime @default(now())
+  Following   Users    @relation(fields: [followingID], references: [id])
+
+  @@index([userID, followingID])
+}
+
+model ReadingList {
+  id                  String               @id @default(uuid())
+  readingListCode     String               @unique
+  readingListName     String
+  readingListNameSlug String               @unique
+  userID              String
+  isDeletable         Boolean
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  ReadingListToBlogs  ReadingListToBlogs[]
+
+  @@index([readingListCode, userID])
+}
+
+model ReadingListToBlogs {
+  id            String      @id @default(uuid())
+  readingListID String
+  blogID        String
+  ReadingList   ReadingList @relation(fields: [readingListID], references: [id], onDelete: Cascade)
+  Blogs         Blogs       @relation(fields: [blogID], references: [id])
+
+  @@index([readingListID, blogID])
+}
+
+model Blogs {
+  id                 String               @id @default(uuid())
+  blogCode           String               @unique
+  title              String?
+  titleSlug          String?              @unique
+  content            String?
+  description        String?
+  userID             String
+  thumbnail          String?
+  viewCount          Int?                 @default(0)
+  isPublished        Boolean              @default(true)
+  isDeleted          Boolean              @default(false)
+  publishedAt        DateTime?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  deletedAt          DateTime?
+  Users              Users                @relation(fields: [userID], references: [id])
+  Tags               Tags[]               @relation("BlogsToTags")
+  BlogsToTags        BlogsToTags[]
+  Images             Images[]
+  ReadingListToBlogs ReadingListToBlogs[]
+
+  @@index([blogCode, userID])
+}
+
+model BlogsToTags {
+  id     String @id @default(uuid())
+  blogID String
+  tagID  String
+  Blogs  Blogs  @relation(fields: [blogID], references: [id])
+  Tags   Tags   @relation(fields: [tagID], references: [id])
+}
+
+model Tags {
+  id            String        @id @default(uuid())
+  tagSlug       String        @unique
+  tag           String
+  beautifiedTag String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Blogs         Blogs[]       @relation("BlogsToTags")
+  BlogsToTags   BlogsToTags[]
+
+  @@index([tagSlug, tag])
+}
+
+model Images {
+  id        String   @id @default(uuid())
+  imageCode String   @unique
+  blogID    String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Blogs     Blogs    @relation(fields: [blogID], references: [id])
+
+  @@index([imageCode, blogID])
+}
